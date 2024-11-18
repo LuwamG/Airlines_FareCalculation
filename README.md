@@ -25,8 +25,7 @@ Structures to manage flight and passenger data.
 Prerequisites
 To build and run this project, you need:
 
-A C++ compiler (e.g., g++ for Linux/macOS or MinGW for Windows).
-A C++11 or later standard is required.
+A C++ compiler.
 File Structure
 bash
 Copy code
