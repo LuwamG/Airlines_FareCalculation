@@ -95,10 +95,10 @@ void loadFlightData(const string& filename, unique_ptr<Flight[]>& flights, int& 
         string fareClassStr, seasonStr;
 
         // Parse flight data from CSV format
-        getline(ss, flights[i].flightNumber, ',');
-        getline(ss, flights[i].origin, ',');
-        getline(ss, flights[i].destination, ',');
-        ss >> flights[i].baseFare;
+        getline(stream, flights[i].flightNumber, ',');
+        getline(stream, flights[i].origin, ',');
+        getline(stream, flights[i].destination, ',');
+         >> flights[i].baseFare;
         ss.ignore(1, ',');
         ss >> flights[i].distance;
         ss.ignore(1, ',');
