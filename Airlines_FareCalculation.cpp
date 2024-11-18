@@ -3,7 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <iomanip>
-#include <ctime>
+
 
 using namespace std;
 
@@ -91,19 +91,19 @@ void loadFlightData(const string& filename, unique_ptr<Flight[]>& flights, int& 
     // Second pass: populate the flights array
     int i = 0;
     while (getline(file, line) && i < size) {
-        stringstream ss(line);
+        stringstream stream(line);
         string fareClassStr, seasonStr;
 
         // Parse flight data from CSV format
         getline(stream, flights[i].flightNumber, ',');
         getline(stream, flights[i].origin, ',');
         getline(stream, flights[i].destination, ',');
-         >> flights[i].baseFare;
-        ss.ignore(1, ',');
-        ss >> flights[i].distance;
-        ss.ignore(1, ',');
-        getline(ss, fareClassStr, ',');
-        getline(ss, seasonStr, ',');
+        stream >> flights[i].baseFare;
+        stream.ignore(1, ',');
+        stream >> flights[i].distance;
+        stream.ignore(1, ',');
+        getline(stream, fareClassStr, ',');
+        getline(stream, seasonStr, ',');
 
         // Convert strings to enum
         flights[i].fareClass = static_cast<FareClass>(stoi(fareClassStr));
