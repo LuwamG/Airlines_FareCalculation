@@ -1,44 +1,45 @@
-#ifndef AIRLINES_FARE_CALCULATION_HPP
-#define AIRLINES_FARE_CALCULATION_HPP
+#ifndef AIRLINES_FARECALCULATION_HPP
+#define AIRLINES_FARECALCULATION_HPP
 
 #include <iostream>
 #include <vector>
 #include <string>
+#include <ctime>
+#include <fstream>
+#include <iomanip>
 
+using namespace std;
 
-// Enum for fare classes
-enum class FareClass {
-    Economy = 1,
-    Business,
-    FirstClass
-};
+enum class FareClass { Economy, Business, FirstClass };
 
-// Struct to store flight details
 struct Flight {
     string flightNumber;
-    string origin;
-    string destination;
+    string origin, destination;
     double baseFare;
-    double distance;
+    double distance; 
     FareClass fareClass;
     bool isPeakSeason;
 };
 
-// Struct to store passenger details
 struct Passenger {
-    string name;
+    string fullName;
     string flightNumber;
     double fare;
     double baggageFee;
     string bookingTime;
+    FareClass fareClass;
+    double baggageWeight;
 };
 
-// Function prototypes
-double calculateFare(const Flight& flight, FareClass fareClass, const string& bookingTime, double baggageFee, short remainingSeats, short totalSeats, double baggageWeight, double extraBaggageFeePerKg, double baggageLimit);
-string fareClassToString(FareClass fareClass);
-bool isValidDate(const string& date);
+double calculateFare(const Flight& flight, FareClass fareClass, const string& bookingTime,
+    const double baggageFee, short remainingSeats, short totalSeats,
+    double baggageWeight, const double extraBaggageFeePerKg, const double baggageLimit);
+
+bool isValidDate(const string& dateStr);
 void addBookingToHistory(vector<Passenger>& flightHistory, const Passenger& passenger);
-void displayPassengerDetails(const Passenger& passenger, const Flight& selectedFlight, double baggageWeight, double baggageFee);
-void displayFlightHistory(const vector<Passenger>& history);
+void displayPassengerDetails(const Passenger& passenger, const Flight& flight, double baggageWeight, double baggageFee);
+void displayFlightHistory(const vector<Passenger>& flightHistory);
+void saveFlightData(const string& filename, const vector<Flight>& flights);
+void loadFlightData(const string& filename, vector<Flight>& flights);
 
 #endif
