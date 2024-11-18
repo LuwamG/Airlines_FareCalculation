@@ -1,17 +1,19 @@
-#ifndef AIRLINES_FARECALCULATION_HPP
-#define AIRLINES_FARECALCULATION_HPP
+#ifndef AIRLINES_FARE_CALCULATION_HPP
+#define AIRLINES_FARE_CALCULATION_HPP
 
-#include <string>
+#include <iostream>
 #include <vector>
+#include <string>
 
-using namespace std;
 
+// Enum for fare classes
 enum class FareClass {
     Economy = 1,
     Business,
     FirstClass
 };
 
+// Struct to store flight details
 struct Flight {
     string flightNumber;
     string origin;
@@ -22,6 +24,7 @@ struct Flight {
     bool isPeakSeason;
 };
 
+// Struct to store passenger details
 struct Passenger {
     string name;
     string flightNumber;
@@ -30,18 +33,12 @@ struct Passenger {
     string bookingTime;
 };
 
-double calculateFare(const Flight& flight, FareClass fareClass, const string& bookingTime,
-    double baggageFee, short remainingSeats, short totalSeats, double baggageWeight,
-    double extraBaggageFeePerKg, double baggageLimit);
-
+// Function prototypes
+double calculateFare(const Flight& flight, FareClass fareClass, const string& bookingTime, double baggageFee, short remainingSeats, short totalSeats, double baggageWeight, double extraBaggageFeePerKg, double baggageLimit);
+string fareClassToString(FareClass fareClass);
 bool isValidDate(const string& date);
-
-void displayPassengerDetails(const Passenger& passenger, const Flight& flight, double baggageWeight, double baggageFee);
-
+void addBookingToHistory(vector<Passenger>& flightHistory, const Passenger& passenger);
+void displayPassengerDetails(const Passenger& passenger, const Flight& selectedFlight, double baggageWeight, double baggageFee);
 void displayFlightHistory(const vector<Passenger>& history);
 
-void addBookingToHistory(vector<Passenger>& history, const Passenger& passenger);
-
-string fareClassToString(FareClass fareClass);
-
-#endif 
+#endif

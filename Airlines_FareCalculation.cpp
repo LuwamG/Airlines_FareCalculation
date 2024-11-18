@@ -1,84 +1,100 @@
 #include "Airlines_FareCalculation.hpp"
 #include <iostream>
-#include <iomanip>
-#include <string>
 #include <vector>
+#include <string>
+#include <ctime>
+#include <iomanip>
 
-using namespace std;
+// Function to calculate fare based on flight details, booking time, and baggage
+double calculateFare(const Flight& flight, FareClass fareClass, const string& bookingTime, double baggageFee, short remainingSeats, short totalSeats, double baggageWeight, double extraBaggageFeePerKg, double baggageLimit) {
+    double finalFare = flight.baseFare;
 
-double calculateFare(const Flight& flight, FareClass fareClass, const string& bookingTime,
-    double baggageFee, short remainingSeats, short totalSeats, double baggageWeight,
-    double extraBaggageFeePerKg, double baggageLimit) {
-    double fare = flight.baseFare;
+    // Adjust price based on demand (remaining seats)
+    finalFare += (totalSeats - remainingSeats) * 0.1 * finalFare; // Increase fare with fewer remaining seats
 
+    // Add seasonality surcharge if peak season
     if (flight.isPeakSeason) {
-        fare += fare * 0.15;  // 15% surcharge
+        finalFare *= 1.2; // Increase fare by 20% in peak season
     }
 
-    double demandFactor = 1.0;
-    if (remainingSeats < totalSeats * 0.2) {
-        demandFactor = 1.2; // 20% increase if fewer than 20% seats are available
-    }
-    fare *= demandFactor;
-
+    // Add extra baggage fee if baggage exceeds limit
     if (baggageWeight > baggageLimit) {
-        double excessWeight = baggageWeight - baggageLimit;
-        fare += excessWeight * extraBaggageFeePerKg;
+        finalFare += (baggageWeight - baggageLimit) * extraBaggageFeePerKg;
     }
 
-    return fare + baggageFee;
+    // Adjust fare based on selected fare class
+    switch (fareClass) {
+    case FareClass::Economy:
+        finalFare += 0;  // No additional charge for economy
+        break;
+    case FareClass::Business:
+        finalFare += 100;  // Add $100 for business class
+        break;
+    case FareClass::FirstClass:
+        finalFare += 200;  // Add $200 for first class
+        break;
+    }
+
+    // Add baggage fee
+    finalFare += baggageFee;
+
+    return finalFare;
 }
 
-bool isValidDate(const string& date) {
-    if (date.size() != 10) return false;
-    if (date[4] != '-' || date[7] != '-') return false;
+// Convert fare class enum to string
+string fareClassToString(FareClass fareClass) {
+    switch (fareClass) {
+    case FareClass::Economy: return "Economy";
+    case FareClass::Business: return "Business";
+    case FareClass::FirstClass: return "First Class";
+    default: return "Unknown";
+    }
+}
 
-    for (int i = 0; i < 10; i++) {
-        if (i == 4 || i == 7) continue;
-        if (!isdigit(date[i])) return false;
+// Validate the date format (YYYY-MM-DD)
+bool isValidDate(const string& date) {
+    if (date.length() != 10) return false;
+    for (int i = 0; i < 10; ++i) {
+        if ((i == 4 || i == 7) && date[i] != '-') return false;
+        if (i != 4 && i != 7 && !isdigit(date[i])) return false;
     }
     return true;
 }
 
-void displayPassengerDetails(const Passenger& passenger, const Flight& flight, double baggageWeight, double baggageFee) {
-    cout << "\n--- Passenger Fare Summary ---\n";
-    cout << "Passenger: " << passenger.name << endl;
-    cout << "Flight Number: " << passenger.flightNumber << endl;
-    cout << "From: " << flight.origin << " to " << flight.destination << endl;
-    cout << "Fare Class: " << fareClassToString(flight.fareClass) << endl;
-    cout << "Booking Time: " << passenger.bookingTime << endl;
-    cout << "Baggage Weight: " << baggageWeight << " kg" << endl;
-    cout << "Baggage Fee: $" << baggageFee << endl;
-    cout << "Total Fare: $" << passenger.fare << endl;
+// Add booking to history
+void addBookingToHistory(vector<Passenger>& flightHistory, const Passenger& passenger) {
+    flightHistory.push_back(passenger);
 }
 
+// Display passenger details
+void displayPassengerDetails(const Passenger& passenger, const Flight& selectedFlight, double baggageWeight, double baggageFee) {
+    cout << "\n--- Passenger Fare Summary ---\n";
+    cout << "Passenger: " << passenger.name << "\n";
+    cout << "Flight Number: " << selectedFlight.flightNumber << "\n";
+    cout << "From: " << selectedFlight.origin << " to " << selectedFlight.destination << "\n";
+    cout << "Fare Class: " << fareClassToString(selectedFlight.fareClass) << "\n";
+    cout << "Booking Time: " << passenger.bookingTime << "\n";
+    cout << "Baggage Weight: " << baggageWeight << " kg\n";
+    cout << "Baggage Fee: $" << baggageFee << "\n";
+    cout << "Total Fare: $" << passenger.fare << "\n";
+    cout << "-----------------------------\n";
+}
+
+// Display flight history (show all previous bookings)
 void displayFlightHistory(const vector<Passenger>& history) {
     if (history.empty()) {
-        cout << "\nNo previous bookings found.\n";
+        cout << "\nNo previous bookings found.\n";  // If no history, inform the user
     }
     else {
         cout << "\n--- Flight Booking History ---\n";
         for (const auto& passenger : history) {
-            cout << "Name: " << passenger.name << endl;
-            cout << "Flight Number: " << passenger.flightNumber << endl;
-            cout << "Fare Class: " << fareClassToString((FareClass)passenger.fare) << endl;
-            cout << "Booking Time: " << passenger.bookingTime << endl;
-            cout << "Baggage Fee: $" << passenger.baggageFee << endl;
-            cout << "Total Fare: $" << passenger.fare << endl;
-            cout << "---------------------------------\n";
+            cout << "Name: " << passenger.name << "\n";
+            cout << "Flight Number: " << passenger.flightNumber << "\n";
+            cout << "Fare Class: " << fareClassToString((FareClass)passenger.fare) << "\n";
+            cout << "Booking Time: " << passenger.bookingTime << "\n";
+            cout << "Baggage Fee: $" << passenger.baggageFee << "\n";
+            cout << "Total Fare: $" << passenger.fare << "\n";
+            cout << "-----------------------------\n";
         }
-    }
-}
-
-void addBookingToHistory(vector<Passenger>& history, const Passenger& passenger) {
-    history.push_back(passenger);
-}
-
-string fareClassToString(FareClass fareClass) {
-    switch (fareClass) {
-    case FareClass::Economy:   return "Economy";
-    case FareClass::Business:  return "Business";
-    case FareClass::FirstClass: return "First Class";
-    default: return "Unknown";
     }
 }

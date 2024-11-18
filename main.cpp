@@ -6,6 +6,7 @@
 using namespace std;
 
 int main() {
+    // Sample flights available
     vector<Flight> flights = {
         {"AA101", "New York", "Los Angeles", 300.00, 2500, FareClass::Economy, false},
         {"BA202", "London", "Paris", 150.00, 500, FareClass::Business, true},
@@ -22,6 +23,7 @@ int main() {
     vector<Passenger> flightHistory;
 
     do {
+        // Show available flights
         cout << "Available Flights: \n";
         for (size_t i = 0; i < flights.size(); ++i) {
             cout << i + 1 << ". Flight Number: " << flights[i].flightNumber
@@ -30,6 +32,7 @@ int main() {
                 << ", Base Fare: $" << flights[i].baseFare << endl;
         }
 
+        // Get user choice for flight
         int flightChoice;
         cout << "Select a flight by entering the number (1-3): ";
         cin >> flightChoice;
@@ -43,11 +46,13 @@ int main() {
         short rem = remainingSeats[flightChoice - 1];
         short tot = totalSeats[flightChoice - 1];
 
+        // Get user's full name
         string fullName;
         cin.ignore();
         cout << "Enter your full name: ";
         getline(cin, fullName);
 
+        // Get user's fare class choice
         cout << "Choose a fare class (1 - Economy, 2 - Business, 3 - First Class): ";
         int fareChoice;
         cin >> fareChoice;
@@ -70,6 +75,7 @@ int main() {
 
         cout << "You have selected: " << fareClassToString(fareClass) << " class." << endl;
 
+        // Get booking time
         string bookingTime;
         cout << "Enter the booking time (YYYY-MM-DD): ";
         while (true) {
@@ -82,24 +88,40 @@ int main() {
             }
         }
 
+        // Get baggage weight
         double baggageWeight;
         cout << "Enter your baggage weight (kg): ";
         cin >> baggageWeight;
 
+        // Calculate total fare
         double finalFare = calculateFare(selectedFlight, fareClass, bookingTime, baggageFee, rem, tot, baggageWeight, extraBaggageFeePerKg, baggageLimit);
 
+        // Create a new passenger object with the booking details
         Passenger passenger = { fullName, selectedFlight.flightNumber, finalFare, baggageFee, bookingTime };
 
+        // Add this booking to history
         addBookingToHistory(flightHistory, passenger);
 
+        // Display booking details
         displayPassengerDetails(passenger, selectedFlight, baggageWeight, baggageFee);
 
-        cout << "\nDo you want to book another flight? (y/n): ";
-        char again;
-        cin >> again;
-        if (again != 'y' && again != 'Y') break;
+        // Ask the user if they want to view booking history
+        char viewHistory;
+        cout << "Do you want to see your previous booking history? (y/n): ";
+        cin >> viewHistory;
 
-        displayFlightHistory(flightHistory);
+        if (viewHistory == 'y' || viewHistory == 'Y') {
+            displayFlightHistory(flightHistory);
+        }
+
+        // Ask if the user wants to book another flight
+        cout << "Do you want to book another flight? (y/n): ";
+        char anotherBooking;
+        cin >> anotherBooking;
+
+        if (anotherBooking != 'y' && anotherBooking != 'Y') {
+            break;
+        }
 
     } while (true);
 
