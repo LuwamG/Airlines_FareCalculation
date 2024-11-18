@@ -1,9 +1,41 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "Airlines_FareCalculation.hpp"
+#include "Airlines_FareCalculation.hpp"  // Include your header file for the necessary declarations
 
 using namespace std;
+
+// Function to ensure the input is a valid integer.
+int getValidIntegerInput(const string& prompt) {
+    int value;
+    while (true) {
+        cout << prompt;
+        if (cin >> value) {
+            return value;
+        }
+        else {
+            cout << "Invalid input. Please enter a valid number.\n";
+            cin.clear();  // Clear error flag
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Ignore invalid input
+        }
+    }
+}
+
+// Function to ensure the input is a valid double.
+double getValidDoubleInput(const string& prompt) {
+    double value;
+    while (true) {
+        cout << prompt;
+        if (cin >> value && value >= 0) {
+            return value;
+        }
+        else {
+            cout << "Invalid input. Please enter a valid positive number.\n";
+            cin.clear();  // Clear error flag
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Ignore invalid input
+        }
+    }
+}
 
 int main() {
     // Sample flights available
@@ -21,7 +53,7 @@ int main() {
     const double baggageLimit = 20.0;
 
     vector<Passenger> flightHistory;
-    char viewHistory;  // Reuse this variable
+    char viewHistory;
 
     do {
         // Show available flights
@@ -34,9 +66,7 @@ int main() {
         }
 
         // Get user choice for flight
-        int flightChoice;
-        cout << "Select a flight by entering the number (1-3): ";
-        cin >> flightChoice;
+        int flightChoice = getValidIntegerInput("Select a flight by entering the number (1-3): ");
 
         if (flightChoice < 1 || flightChoice > 3) {
             cout << "Invalid choice. Exiting...\n";
@@ -54,9 +84,7 @@ int main() {
         getline(cin, fullName);
 
         // Get user's fare class choice
-        cout << "Choose a fare class (1 - Economy, 2 - Business, 3 - First Class): ";
-        int fareChoice;
-        cin >> fareChoice;
+        int fareChoice = getValidIntegerInput("Choose a fare class (1 - Economy, 2 - Business, 3 - First Class): ");
         FareClass fareClass;
 
         switch (fareChoice) {
@@ -74,8 +102,9 @@ int main() {
             return 1;
         }
 
-        cout << "Enter booking time (yyyy-mm-dd): ";
+        // Get booking time
         string bookingTime;
+        cout << "Enter booking time (yyyy-mm-dd): ";
         cin >> bookingTime;
 
         // Validate date format
@@ -85,9 +114,7 @@ int main() {
         }
 
         // Get baggage weight
-        double baggageWeight;
-        cout << "Enter baggage weight (kg): ";
-        cin >> baggageWeight;
+        double baggageWeight = getValidDoubleInput("Enter baggage weight (kg): ");
 
         // Calculate the fare
         double totalFare = calculateFare(selectedFlight, fareClass, bookingTime, baggageFee, rem, tot, baggageWeight, extraBaggageFeePerKg, baggageLimit);

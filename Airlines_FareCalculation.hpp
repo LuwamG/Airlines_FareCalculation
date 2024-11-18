@@ -1,12 +1,8 @@
-#ifndef AIRLINES_FARECALCULATION_HPP
-#define AIRLINES_FARECALCULATION_HPP
+#ifndef AIRLINES_FARE_CALCULATION_HPP
+#define AIRLINES_FARE_CALCULATION_HPP
 
-#include <iostream>
-#include <vector>
 #include <string>
-#include <ctime>
-#include <fstream>
-#include <iomanip>
+#include <vector>
 
 using namespace std;
 
@@ -14,15 +10,16 @@ enum class FareClass { Economy, Business, FirstClass };
 
 struct Flight {
     string flightNumber;
-    string origin, destination;
+    string origin;
+    string destination;
     double baseFare;
-    double distance; 
+    double distance;
     FareClass fareClass;
     bool isPeakSeason;
 };
 
 struct Passenger {
-    string fullName;
+    string name;
     string flightNumber;
     double fare;
     double baggageFee;
@@ -31,15 +28,15 @@ struct Passenger {
     double baggageWeight;
 };
 
+// Function declarations
 double calculateFare(const Flight& flight, FareClass fareClass, const string& bookingTime,
-    const double baggageFee, short remainingSeats, short totalSeats,
-    double baggageWeight, const double extraBaggageFeePerKg, const double baggageLimit);
+    double baggageFee, short remainingSeats, short totalSeats,
+    double baggageWeight, double extraBaggageFeePerKg, double baggageLimit);
 
-bool isValidDate(const string& dateStr);
 void addBookingToHistory(vector<Passenger>& flightHistory, const Passenger& passenger);
-void displayPassengerDetails(const Passenger& passenger, const Flight& flight, double baggageWeight, double baggageFee);
+void displayPassengerDetails(const Passenger& passenger, const Flight& flight,
+    double baggageWeight, double baggageFee);
 void displayFlightHistory(const vector<Passenger>& flightHistory);
-void saveFlightData(const string& filename, const vector<Flight>& flights);
-void loadFlightData(const string& filename, vector<Flight>& flights);
+bool isValidDate(const string& date);  // Declare the isValidDate function
 
 #endif
