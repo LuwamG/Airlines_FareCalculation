@@ -1,10 +1,10 @@
 #include <iostream>
-#include <fstream>
-#include <sstream>
 #include <vector>
 #include <string>
 #include <iomanip>
 #include "Airlines_FareCalculation.hpp"
+#include <sstream>
+
 using namespace std;
 
 // Function to calculate the total fare based on different factors
@@ -38,6 +38,7 @@ double calculateFare(const Flight& flight, FareClass fareClass, const string& bo
     return totalFare + baggageFee;
 }
 
+// Function to validate the booking date format (yyyy-mm-dd)
 bool isValidDate(const string& date) {
     // Ensure the string has the correct length and format (yyyy-mm-dd)
     if (date.size() != 10 || date[4] != '-' || date[7] != '-') return false;
@@ -94,43 +95,5 @@ void displayFlightHistory(const vector<Passenger>& flightHistory) {
                 << ", Fare: $" << fixed << setprecision(2) << passenger.fare
                 << ", Booking Time: " << passenger.bookingTime << endl;
         }
-    }
-}
-
-// Saving flight data to a file
-void saveFlightData(const string& filename, const vector<Flight>& flights) {
-    ofstream file(filename);
-    if (file.is_open()) {
-        for (const auto& flight : flights) {
-            file << flight.flightNumber << "," << flight.origin << "," << flight.destination << ","
-                << flight.baseFare << "," << flight.distance << "," << static_cast<int>(flight.fareClass)
-                << "," << flight.isPeakSeason << endl;
-        }
-        file.close();
-    }
-    else {
-        cout << "Unable to open file for saving data." << endl;
-    }
-}
-
-// Loading flight data from a file
-void loadFlightData(const string& filename, vector<Flight>& flights) {
-    ifstream file(filename);
-    string line;
-    while (getline(file, line)) {
-        stringstream stream(line);
-        Flight flight;
-        string fareClassStr;
-        getline(stream, flight.flightNumber, ',');
-        getline(stream, flight.origin, ',');
-        getline(stream, flight.destination, ',');
-        stream >> flight.baseFare;
-        stream.ignore();  // Ignore comma
-        stream >> flight.distance;
-        stream.ignore();  // Ignore comma
-        getline(stream, fareClassStr, ',');
-        flight.fareClass = static_cast<FareClass>(stoi(fareClassStr));
-        stream >> flight.isPeakSeason;
-        flights.push_back(flight);
     }
 }

@@ -1,7 +1,7 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "Airlines_FareCalculation.hpp"  // Include your header file for the necessary declarations
+#include "Airlines_FareCalculation.hpp"  // Include the header for function declarations
 
 using namespace std;
 
@@ -69,78 +69,37 @@ int main() {
         int flightChoice = getValidIntegerInput("Select a flight by entering the number (1-3): ");
 
         if (flightChoice < 1 || flightChoice > 3) {
-            cout << "Invalid choice. Exiting...\n";
-            return 1;
+            cout << "Invalid flight selection. Please try again.\n";
+            continue;
         }
 
-        Flight selectedFlight = flights[flightChoice - 1];
-        short rem = remainingSeats[flightChoice - 1];
-        short tot = totalSeats[flightChoice - 1];
-
-        // Get user's full name
-        string fullName;
+        // Get passenger details
+        string passengerName;
+        cout << "Enter passenger name: ";
         cin.ignore();
-        cout << "Enter your full name: ";
-        getline(cin, fullName);
+        getline(cin, passengerName);
 
-        // Get user's fare class choice
-        int fareChoice = getValidIntegerInput("Choose a fare class (1 - Economy, 2 - Business, 3 - First Class): ");
-        FareClass fareClass;
-
-        switch (fareChoice) {
-        case 1:
-            fareClass = FareClass::Economy;
-            break;
-        case 2:
-            fareClass = FareClass::Business;
-            break;
-        case 3:
-            fareClass = FareClass::FirstClass;
-            break;
-        default:
-            cout << "Invalid choice. Exiting...\n";
-            return 1;
-        }
-
-        // Get booking time
-        string bookingTime;
-        cout << "Enter booking time (yyyy-mm-dd): ";
-        cin >> bookingTime;
-
-        // Validate date format
-        if (!isValidDate(bookingTime)) {
-            cout << "Invalid date format. Exiting...\n";
-            return 1;
-        }
-
-        // Get baggage weight
-        double baggageWeight = getValidDoubleInput("Enter baggage weight (kg): ");
+        FareClass selectedFareClass = (FareClass)getValidIntegerInput("Select Fare Class (1: Economy, 2: Business, 3: First Class): ");
+        double baggageWeight = getValidDoubleInput("Enter baggage weight in kg: ");
 
         // Calculate the fare
-        double totalFare = calculateFare(selectedFlight, fareClass, bookingTime, baggageFee, rem, tot, baggageWeight, extraBaggageFeePerKg, baggageLimit);
+        Flight selectedFlight = flights[flightChoice - 1];
+        double totalFare = calculateFare(selectedFlight, selectedFareClass, "2024-11-16", baggageFee,
+            remainingSeats[flightChoice - 1], totalSeats[flightChoice - 1],
+            baggageWeight, extraBaggageFeePerKg, baggageLimit);
 
-        // Create passenger object with fare class
-        Passenger newPassenger = { fullName, selectedFlight.flightNumber, totalFare, baggageFee, bookingTime, fareClass, baggageWeight };
-
-        // Add to history
+        // Store passenger info
+        Passenger newPassenger = { passengerName, selectedFlight.flightNumber, totalFare, baggageFee, "2024-11-16", selectedFareClass, baggageWeight };
         addBookingToHistory(flightHistory, newPassenger);
 
         // Display passenger details
         displayPassengerDetails(newPassenger, selectedFlight, baggageWeight, baggageFee);
 
-        // Ask if the user wants to view previous booking history
-        cout << "Would you like to view your booking history? (y/n): ";
+        // Option to view booking history
+        cout << "Would you like to view your booking history? (Y/N): ";
         cin >> viewHistory;
 
-        if (viewHistory == 'y' || viewHistory == 'Y') {
-            displayFlightHistory(flightHistory);
-        }
-
-        // Ask if they want to make another booking
-        cout << "Do you want to make another booking? (y/n): ";
-        cin >> viewHistory;
-
-    } while (viewHistory == 'y' || viewHistory == 'Y');
+    } while (viewHistory == 'Y' || viewHistory == 'y');
 
     return 0;
 }
