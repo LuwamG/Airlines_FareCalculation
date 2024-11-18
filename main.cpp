@@ -14,17 +14,17 @@ int main() {
     };
 
     // Initialize remaining seats and total seats for each flight
-    short remainingSeats[] = { 50, 100, 150 };  // Remaining seats, within range for short
-    short totalSeats[] = { 200, 200, 200 };    // Total seats, within range for short
+    short remainingSeats[] = { 50, 100, 150 };  
+    short totalSeats[] = { 200, 200, 200 };    
 
     // Fixed baggage fee and extra baggage details
-    const double baggageFee = 50.0;           // Regular baggage fee (for up to 20 kg)
-    const double extraBaggageFeePerKg = 25.0; // Extra baggage fee per kg over the limit
-    const double baggageLimit = 20.0;         // Baggage weight limit in kg
+    const double baggageFee = 50.0;          
+    const double extraBaggageFeePerKg = 25.0;
+    const double baggageLimit = 20.0;         
 
     // Loop for user interaction
     do {
-        // Display available flights
+       
         cout << "Available Flights: \n";
         for (size_t i = 0; i < flights.size(); ++i) {
             cout << i + 1 << ". Flight Number: " << flights[i].flightNumber
@@ -33,7 +33,7 @@ int main() {
                 << ", Base Fare: $" << flights[i].baseFare << endl;
         }
 
-        // Let the user choose a flight
+        //  choose a flight
         int flightChoice;
         cout << "Select a flight by entering the number (1-3): ";
         cin >> flightChoice;
@@ -50,9 +50,9 @@ int main() {
 
         // Ask for the full name of the passenger
         string fullName;
-        cin.ignore();  // This clears the newline character left in the input buffer
+        cin.ignore();  
         cout << "Enter your full name: ";
-        getline(cin, fullName);  // Allow the user to input full name with spaces
+        getline(cin, fullName);  
 
         // Ask the user to choose a fare class
         cout << "Choose a fare class (1 - Economy, 2 - Business, 3 - First Class): ";
@@ -75,24 +75,34 @@ int main() {
             return 1;
         }
 
-        // Ask for the booking time
+        // Ask for the booking time (ensure it is in the format YYYY-MM-DD)
         string bookingTime;
-        cout << "Enter the booking time (e.g., 2023-12-01): ";
-        cin >> bookingTime;
+        cout << "Enter the booking time (YYYY-MM-DD): ";
+        while (true) {
+            cin >> bookingTime;
+            if (isValidDate(bookingTime)) {
+                break;
+            }
+            else {
+                cout << "Invalid date format. Please enter in the format YYYY-MM-DD: ";
+            }
+        }
 
-        // Ask for the baggage weight (in kg)
+        // Ask for baggage weight
         double baggageWeight;
-        cout << "Enter the baggage weight (kg): ";
+        cout << "Enter your baggage weight (kg): ";
         cin >> baggageWeight;
 
-        // Calculate the fare using the fixed baggage fee and extra baggage logic
-        double totalFare = calculateFare(selectedFlight, fareClass, bookingTime, baggageFee, rem, tot, baggageWeight, extraBaggageFeePerKg, baggageLimit);
+        // Calculate the fare
+        double finalFare = calculateFare(selectedFlight, fareClass, bookingTime, baggageFee, rem, tot, baggageWeight, extraBaggageFeePerKg, baggageLimit);
 
-        // Create and display passenger details
-        Passenger passenger = { fullName, selectedFlight.flightNumber, totalFare, baggageFee, bookingTime };
+        // Create the passenger object
+        Passenger passenger = { fullName, selectedFlight.flightNumber, finalFare, baggageFee, bookingTime };
+
+        // Display passenger details
         displayPassengerDetails(passenger, selectedFlight, baggageWeight, baggageFee);
 
-        // Ask the user if they want to book another flight
+        // Ask if the user wants to book another flight
         cout << "\nDo you want to book another flight? (y/n): ";
         char again;
         cin >> again;

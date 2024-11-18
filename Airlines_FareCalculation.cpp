@@ -1,100 +1,64 @@
 #include "Airlines_FareCalculation.hpp"
 #include <iostream>
-#include <fstream>
+#include <cctype>  
 
 using namespace std;
 
-// Calculate the fare based on various parameters
-double calculateFare(const Flight& flight, FareClass fareClass, const string& bookingTime,
-    double baggageFee, short remainingSeats, short totalSeats, double baggageWeight,
-    double extraBaggageFeePerKg, double baggageLimit) {
-    double totalFare = flight.baseFare;
+// Function to validate date format (YYYY-MM-DD)
+bool isValidDate(const string& date) {
+    if (date.length() != 10) {
+        return false;
+    }
+    if (date[4] != '-' || date[7] != '-') {
+        return false;
+    }
 
-    // Adjust based on fare class
-    switch (fareClass) {
-    case FareClass::Economy:
-        totalFare *= 1.0; // No change for Economy class
-        break;
-    case FareClass::Business:
-        totalFare *= 1.5; // 50% more for Business class
-        break;
-    case FareClass::FirstClass:
-        totalFare *= 2.0; // 100% more for First Class
-        break;
+    for (int i = 0; i < 10; ++i) {
+        if (i != 4 && i != 7 && !isdigit(date[i])) {
+            return false;
+        }
+    }
+
+    int year = stoi(date.substr(0, 4));
+    int month = stoi(date.substr(5, 2));
+    int day = stoi(date.substr(8, 2));
+
+    if (year < 1000 || year > 9999 || month < 1 || month > 12 || day < 1 || day > 31) {
+        return false;
+    }
+    return true;
+}
+
+// Fare calculation logic
+double calculateFare(const Flight& flight, FareClass fareClass, const string& bookingTime,
+    double baggageFee, short remainingSeats, short totalSeats,
+    double baggageWeight, double extraBaggageFeePerKg, double baggageLimit) {
+    double finalFare = flight.baseFare;
+
+    // Apply extra baggage fee if necessary
+    if (baggageWeight > baggageLimit) {
+        double extraWeight = baggageWeight - baggageLimit;
+        finalFare += extraWeight * extraBaggageFeePerKg;
     }
 
     // Apply peak season surcharge
     if (flight.isPeakSeason) {
-        totalFare *= 1.3; // Increase by 30% during peak season
+        finalFare *= 1.2;  // Assuming a 20% surcharge for peak season
     }
 
-    // Apply dynamic pricing based on remaining seats
-    if (remainingSeats < totalSeats / 4) {
-        totalFare *= 1.2; // Increase by 20% due to high demand
-    }
-
-    // Distance surcharge for long flights
-    if (flight.distance > 2000) {
-        totalFare += 100.0; // Add $100 for long-haul flights
-    }
-
-    // Add regular baggage fee
-    totalFare += baggageFee;
-
-    // Calculate and apply extra baggage fee if applicable
-    if (baggageWeight > baggageLimit) {
-        double extraWeight = baggageWeight - baggageLimit;
-        totalFare += extraWeight * extraBaggageFeePerKg; // Add extra baggage fee
-    }
-
-    return totalFare;
+    return finalFare;
 }
 
-// Display the passenger details after calculating the fare
-void displayPassengerDetails(const Passenger& passenger, const Flight& flight, double baggageWeight, double baggageFee) {
+// Display passenger details
+void displayPassengerDetails(const Passenger& passenger, const Flight& flight,
+    double baggageWeight, double baggageFee) {
     cout << "\n--- Passenger Fare Summary ---\n";
-    cout << "Passenger: " << passenger.name << "\n";
-    cout << "Flight Number: " << passenger.flightNumber << "\n";
-    cout << "From: " << flight.origin << " to " << flight.destination << "\n";
-    cout << "Fare Class: " << (flight.fareClass == FareClass::Economy ? "Economy" :
-        flight.fareClass == FareClass::Business ? "Business" : "First Class") << "\n";
-    cout << "Booking Time: " << passenger.bookingTime << "\n";
+    cout << "Passenger: " << passenger.name << endl;
+    cout << "Flight Number: " << flight.flightNumber << endl;
+    cout << "From: " << flight.origin << " to " << flight.destination << endl;
+    cout << "Fare Class: " << (int)flight.fareClass << endl; 
+    cout << "Booking Time: " << passenger.bookingTime << endl;
     cout << "Baggage Weight: " << baggageWeight << " kg\n";
-    cout << "Baggage Fee: $" << baggageFee << "\n";
-    cout << "Total Fare: $" << passenger.fare << "\n";
-}
-
-// Function to save flight data to a file
-void saveFlightData(const string& filename, const vector<Flight>& flights) {
-    ofstream outFile(filename);
-    if (!outFile) {
-        cerr << "Error opening file for saving flight data.\n";
-        return;
-    }
-
-    for (const auto& flight : flights) {
-        outFile << flight.flightNumber << "," << flight.origin << "," << flight.destination
-            << "," << flight.baseFare << "," << flight.distance << ","
-            << static_cast<int>(flight.fareClass) << "," << flight.isPeakSeason << "\n";
-    }
-    outFile.close();
-}
-
-// Function to load flight data from a file
-void loadFlightData(const string& filename, vector<Flight>& flights) {
-    ifstream inFile(filename);
-    if (!inFile) {
-        cerr << "Error opening file for loading flight data.\n";
-        return;
-    }
-
-    Flight flight;
-    int fareClass;
-    while (inFile >> flight.flightNumber >> flight.origin >> flight.destination
-        >> flight.baseFare >> flight.distance >> fareClass >> flight.isPeakSeason) {
-        flight.fareClass = static_cast<FareClass>(fareClass);
-        flights.push_back(flight);
-    }
-
-    inFile.close();
+    cout << "Baggage Fee: $" << baggageFee << endl;
+    cout << "Total Fare: $" << passenger.fare << endl;
 }
