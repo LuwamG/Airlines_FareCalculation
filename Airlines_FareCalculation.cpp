@@ -32,8 +32,8 @@ double calculateFare(const Flight& flight, FareClass fareClass, const string& bo
     }
 
     // Adjust fare based on demand
-    int remainingSeats = 50; // Example value
-    int totalSeats = 100;    // Example value
+    int remainingSeats; 
+    int totalSeats;   
     fare = adjustPriceBasedOnDemand(fare, remainingSeats, totalSeats);
 
     // Apply seasonality surcharge

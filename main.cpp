@@ -8,6 +8,8 @@ using namespace std;
 int main() {
     // Flight data initialization
     int flightCount = 3;
+    int remainingSeats = 50; 
+    int totalSeats = 100;    
     unique_ptr<Flight[]> flights = make_unique<Flight[]>(flightCount);
 
     flights[0] = { "AA101", "New York", "Los Angeles", 300.00, 2500, FareClass::Economy, false };
