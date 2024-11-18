@@ -6,11 +6,10 @@
 
 using namespace std;
 
-
 enum class FareClass {
-    Economy = 1,    
-    Business,  
-    FirstClass   
+    Economy = 1,
+    Business,
+    FirstClass
 };
 
 struct Flight {
@@ -31,14 +30,18 @@ struct Passenger {
     string bookingTime;
 };
 
-
 double calculateFare(const Flight& flight, FareClass fareClass, const string& bookingTime,
-    double baggageFee, short remainingSeats, short totalSeats,
-    double baggageWeight, double extraBaggageFeePerKg, double baggageLimit);
+    double baggageFee, short remainingSeats, short totalSeats, double baggageWeight,
+    double extraBaggageFeePerKg, double baggageLimit);
 
-void displayPassengerDetails(const Passenger& passenger, const Flight& flight,
-    double baggageWeight, double baggageFee);
+bool isValidDate(const string& date);
 
-bool isValidDate(const string& date);  
+void displayPassengerDetails(const Passenger& passenger, const Flight& flight, double baggageWeight, double baggageFee);
 
-#endif
+void displayFlightHistory(const vector<Passenger>& history);
+
+void addBookingToHistory(vector<Passenger>& history, const Passenger& passenger);
+
+string fareClassToString(FareClass fareClass);
+
+#endif 
