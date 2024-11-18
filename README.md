@@ -3,22 +3,32 @@ Airlines_FareCalculation
 Author: Luwam Gebrezgiabhier
 Overview
 
-This program simulates a simple airline fare calculation system. It calculates flight fares based on various factors such as fare class, distance, seasonality (peak or off-peak), and booking demand. It also allows for storing flight data to a file and displaying relevant flight and passenger details.
+This C++ program simulates flight bookings, fare calculations, and booking history management. It allows users to select flights, choose fare classes, enter baggage details, and view booking history.
 
 Key Features:
-Calculate fares based on different fare classes (Economy, Business, First Class).
-Apply seasonality surcharge during peak seasons.
-Adjust fare based on demand (price increases when fewer seats are available).
-Factor in distance for additional charges on long-haul flights.
-Allow users to view flight and passenger details.
-Save flight data to a file for persistence.
-Project Structure
-The project is structured into the following files:
 
-Airlines_FareCalculation.hpp: Header file containing structure definitions, enumerations, and function prototypes.
-Airlines_FareCalculation.cpp: Source file that contains function definitions for fare calculations and displaying flight/passenger details.
-main.cpp: The main program file that ties everything together and runs the program.
-flights.txt: Output file where flight data is saved.
+Flight Selection: Choose from available flights.
+Fare Class: Select Economy, Business, or First Class.
+Baggage Fee: Calculate based on baggage weight and additional fees.
+Booking History: Track and view previous bookings.
+Date Validation: Ensures booking date is in yyyy-mm-dd format.
+
+Usage:
+
+Flight Selection: Choose a flight by entering the number.
+Input Personal Info: Provide full name, fare class, booking date, and baggage weight.
+Fare Calculation: The program calculates the total fare based on your inputs.
+Booking History: Optionally view your previous bookings.
+Repeat or Exit: Choose to make another booking or exit.
+File Structure
+
+main.cpp: Contains user interaction and booking logic.
+Airlines_FareCalculation.cpp: Implements fare calculation, booking history, and related functions.
+Airlines_FareCalculation.hpp: Declares structures and function prototypes.
+
+License:
+
+This project is open-source. Any suggestions are Welcome!
 
 How to compile:
 Use c++ compiler
