@@ -2,49 +2,23 @@ Airlines_FareCalculation
 
 Author: Luwam Gebrezgiabhier
 Overview
-This project simulates an airline fare calculation system, taking into account flight information, fare classes, seasonality, and seat demand. The program allows you to:
 
-Calculate flight fares based on various factors.
-Load and save flight data from a file (CSV format).
-Manage dynamic memory using pointers and smart pointers.
-Use structures, enumerations, arrays, and streams for data handling.
-Features
-Flight Fare Calculation:
+This program simulates a simple airline fare calculation system. It calculates flight fares based on various factors such as fare class, distance, seasonality (peak or off-peak), and booking demand. It also allows for storing flight data to a file and displaying relevant flight and passenger details.
 
-Fares are calculated based on fare classes (Economy, Business, FirstClass), peak/off-peak season, and demand (remaining seats).
-File Operations:
+Key Features:
+Calculate fares based on different fare classes (Economy, Business, First Class).
+Apply seasonality surcharge during peak seasons.
+Adjust fare based on demand (price increases when fewer seats are available).
+Factor in distance for additional charges on long-haul flights.
+Allow users to view flight and passenger details.
+Save flight data to a file for persistence.
+Project Structure
+The project is structured into the following files:
 
-Save and load flight data from a CSV file.
-Smart Pointers:
+Airlines_FareCalculation.hpp: Header file containing structure definitions, enumerations, and function prototypes.
+Airlines_FareCalculation.cpp: Source file that contains function definitions for fare calculations and displaying flight/passenger details.
+main.cpp: The main program file that ties everything together and runs the program.
+flights.txt: Output file where flight data is saved.
 
-Dynamically allocate memory for flight data using smart pointers (std::unique_ptr).
-Enumerations and Structures:
-
-Use enumerations for fare classes and seasons.
-Structures to manage flight and passenger data.
-Prerequisites
-To build and run this project, you need:
-
-A C++ compiler.
-File Structure
-bash
-Copy code
-
-Functions
-calculateFare()
-Calculates the fare for a given flight based on:
-
-Fare Class: Economy, Business, or FirstClass.
-Season: Peak or OffPeak.
-Demand: Adjusts the fare based on the number of remaining seats.
-adjustPriceBasedOnDemand()
-Adjusts the base fare based on the demand, which is calculated by the number of remaining seats compared to the total seats.
-
-applySeasonalitySurcharge()
-Applies a surcharge if the flight is in the peak season.
-
-saveFlightData()
-Saves flight data (flight number, origin, destination, base fare, distance, fare class, and season) to a file (flights.txt) in CSV format.
-
-loadFlightData()
-Loads flight data from the flights.txt file and stores it in a dynamically allocated array using std::unique_ptr.
+How to compile:
+Use c++ compiler
