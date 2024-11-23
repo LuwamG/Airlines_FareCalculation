@@ -32,24 +32,23 @@ bool isValidDate(const string& date) {
 
 //  function to get a valid username (first and last name)
 void getValidUsername(string& firstName, string& lastName) {
-    while (true) {
-        cout << "Enter full name (First Last): ";
-        string fullName;
-        getline(cin, fullName);  
+    string fullName;
+    bool isValid = false;
 
-        // Use stringstream to parse the full name into first and last names
-        stringstream nameStream(fullName);
-        if (!(getline(nameStream, firstName, ' ') && getline(nameStream, lastName))) {
-            cout << "Invalid input. Please enter both first and last names.\n";
-        }
-        else if (firstName.empty() || lastName.empty()) {
-            cout << "Invalid input. Both first and last names must be non-empty.\n";
+    while (!isValid) {
+        cout << "Enter your full name (First Last): ";
+        getline(cin, fullName); // Read the full name including space
+
+        // Remove extra spaces
+        stringstream ss(fullName);
+        ss >> firstName >> lastName;
+
+        // Ensure both first and last names are entered
+        if (firstName.empty() || lastName.empty()) {
+            cout << "Invalid input. Please enter both your first and last name.\n";
         }
         else {
-          
-            firstName.erase(0, firstName.find_first_not_of(' '));
-            lastName.erase(0, lastName.find_first_not_of(' '));
-            break;  
+            isValid = true; // If both names are valid, exit loop
         }
     }
 }
