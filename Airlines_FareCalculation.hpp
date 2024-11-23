@@ -3,39 +3,42 @@
 
 #include <iostream>
 #include <string>
-#include <memory>  // Include memory for smart pointers
-#include <iomanip>
+#include <memory>  
+#include <iomanip>  
 
 using namespace std;
 
+// Enum for Fare Classes: Economy, Business, First Class
 enum class FareClass {
-    Economy = 1,
-    Business,
-    FirstClass
+    Economy = 1,  
+    Business,    
+    FirstClass    
 };
 
+// Flight structure to store flight details
 struct Flight {
-    string flightNumber;
-    string origin;
-    string destination;
-    double baseFare;
-    double distance;
-    FareClass fareClass;
-    bool isRefundable;
+    string flightNumber;  
+    string origin;       
+    string destination;   
+    double baseFare;      
+    double distance;      
+    FareClass fareClass;  
+    bool isRefundable;    
 };
 
+// Passenger structure to store passenger booking details
 struct Passenger {
-    string firstName;
-    string lastName;
-    string flightNumber;
-    double totalFare;
-    double baggageFee;
-    string bookingTime;
-    FareClass fareClass;
-    double baggageWeight;
+    string firstName;      
+    string lastName;       
+    string flightNumber;   
+    double totalFare;      
+    double baggageFee;     
+    string bookingTime;    
+    FareClass fareClass;   
+    double baggageWeight;  
 };
 
-// Function Prototypes
+// Function Prototypes (to be defined in the .cpp file)
 double calculateFare(const Flight& flight, FareClass fareClass, const string& bookingTime,
     double baggageWeight, double baggageFee);
 double calculateBaggageFee(double baggageWeight, double baggageLimit, double extraBaggageFeePerKg);
