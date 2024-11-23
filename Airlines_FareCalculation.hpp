@@ -1,14 +1,19 @@
-#ifndef AIRLINES_FARE_CALCULATION_HPP
-#define AIRLINES_FARE_CALCULATION_HPP
+#ifndef AIRLINES_FARECALCULATION_HPP
+#define AIRLINES_FARECALCULATION_HPP
 
+#include <iostream>
 #include <string>
-#include <vector>
+#include <memory>  // Include memory for smart pointers
+#include <iomanip>
 
 using namespace std;
 
-enum class FareClass { Economy, Business, FirstClass };
+enum class FareClass {
+    Economy = 1,
+    Business,
+    FirstClass
+};
 
-// Flight details struct
 struct Flight {
     string flightNumber;
     string origin;
@@ -16,39 +21,30 @@ struct Flight {
     double baseFare;
     double distance;
     FareClass fareClass;
-    bool isPeakSeason;
+    bool isRefundable;
 };
 
-// Passenger details struct
 struct Passenger {
     string firstName;
     string lastName;
     string flightNumber;
-    double fare;
+    double totalFare;
     double baggageFee;
     string bookingTime;
     FareClass fareClass;
     double baggageWeight;
 };
 
-// Function declarations
+// Function Prototypes
 double calculateFare(const Flight& flight, FareClass fareClass, const string& bookingTime,
-    double baggageFee, short remainingSeats, short totalSeats,
-    double baggageWeight, double extraBaggageFeePerKg, double baggageLimit);
-
-void addBookingToHistory(vector<Passenger>& flightHistory, const Passenger& passenger);
-void displayPassengerDetails(const Passenger& passenger, const Flight& flight,
     double baggageWeight, double baggageFee);
-void displayFlightHistory(const vector<Passenger>& flightHistory);
-bool isValidDate(const string& date);
-
-// Functions for input validation and username handling
+double calculateBaggageFee(double baggageWeight, double baggageLimit, double extraBaggageFeePerKg);
+void addBookingToHistory(shared_ptr<Passenger> flightHistory[], int& passengerCount, shared_ptr<Passenger> passenger);
+void displayPassengerDetails(const shared_ptr<Passenger>& passenger, const Flight& selectedFlight);
+void displayFlightHistory(shared_ptr<Passenger> flightHistory[], int passengerCount);
 int getValidIntegerInput(const string& prompt);
 double getValidDoubleInput(const string& prompt);
-void getValidUsername(string* firstName, string* lastName);
 string getValidDateInput();
-
-// Function to calculate the baggage fee based on the weight
-double calculateBaggageFee(double baggageWeight, double baggageLimit, double extraBaggageFeePerKg);
+void getValidUsername(string& firstName, string& lastName);
 
 #endif
