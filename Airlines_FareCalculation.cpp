@@ -1,82 +1,81 @@
 #include "Airlines_FareCalculation.hpp"
 #include <iostream>
 #include <sstream>
-#include <iomanip>
-#include <limits>
-#include <memory>  
+#include <cctype>
 
 using namespace std;
 
-// Function to calculate the total fare based on flight and class
-double calculateFare(const Flight& flight, FareClass fareClass, const string& bookingTime,
-    double baggageWeight, double baggageFee) {
-    double totalFare = flight.baseFare;
-
-    // Adjust fare based on class
-    if (fareClass == FareClass::Business)
-        totalFare *= 1.5;  // Business class adds 50% to the base fare
-    else if (fareClass == FareClass::FirstClass)
-        totalFare *= 2.0;  // First Class adds 100% to the base fare
-
-    // Add baggage fee to the total fare
-    totalFare += baggageFee;
-
-    return totalFare;
-}
-
-// Function to calculate additional baggage fees if weight exceeds the limit
-double calculateBaggageFee(double baggageWeight, double baggageLimit, double extraBaggageFeePerKg) {
-    if (baggageWeight > baggageLimit) {
-        // If baggage weight exceeds the limit, charge extra
-        return (baggageWeight - baggageLimit) * extraBaggageFeePerKg;
+// Function to validate a date (simple check for format, and valid month/day)
+bool isValidDate(const string& date) {
+    if (date.size() != 10 || date[4] != '-' || date[7] != '-') {
+        return false;
     }
-    return 0.0;  // No extra charge if within the limit
-}
 
-// Add the current passenger booking to history
-void addBookingToHistory(shared_ptr<Passenger> flightHistory[], int& passengerCount, shared_ptr<Passenger> passenger) {
-    flightHistory[passengerCount] = passenger;  // Store shared_ptr to passenger
-    passengerCount++;  // Increment passenger count
-}
-
-// Display details of a passenger's booking
-void displayPassengerDetails(const shared_ptr<Passenger>& passenger, const Flight& selectedFlight) {
-    cout << "\nBooking Summary:\n";
-    cout << "Passenger: " << passenger->firstName << " " << passenger->lastName << "\n";
-    cout << "Flight Number: " << selectedFlight.flightNumber << "\n";
-    cout << "Fare Class: ";
-    switch (passenger->fareClass) {
-    case FareClass::Economy: cout << "Economy"; break;
-    case FareClass::Business: cout << "Business"; break;
-    case FareClass::FirstClass: cout << "First Class"; break;
+    // Check if all characters are digits where expected
+    for (int i = 0; i < 10; ++i) {
+        if (i != 4 && i != 7 && !isdigit(date[i])) {
+            return false;
+        }
     }
-    cout << "\nTotal Fare: $" << fixed << setprecision(2) << passenger->totalFare << "\n";
-    cout << "Baggage Weight: " << passenger->baggageWeight << " kg\n";
-    cout << "Baggage Fee: $" << fixed << setprecision(2) << passenger->baggageFee << "\n";
+
+    // Further checks on date (e.g., valid month and day ranges)
+    int year = stoi(date.substr(0, 4));
+    int month = stoi(date.substr(5, 2));
+    int day = stoi(date.substr(8, 2));
+
+    // Simple validation: months should be 1-12, days 1-31
+    if (month < 1 || month > 12 || day < 1 || day > 31) {
+        return false;
+    }
+    return true;
 }
 
-// Display all flight history for the user
-void displayFlightHistory(shared_ptr<Passenger> flightHistory[], int passengerCount) {
-    if (passengerCount == 0) {
-        cout << "No previous bookings found.\n";
-    }
-    else {
-        cout << "\nBooking History:\n";
-        for (int i = 0; i < passengerCount; ++i) {
-            cout << flightHistory[i]->firstName << " " << flightHistory[i]->lastName
-                << " - Flight: " << flightHistory[i]->flightNumber << ", Fare: $"
-                << fixed << setprecision(2) << flightHistory[i]->totalFare << "\n";
+//  function to get a valid username (first and last name)
+void getValidUsername(string& firstName, string& lastName) {
+    while (true) {
+        cout << "Enter full name (First Last): ";
+        string fullName;
+        getline(cin, fullName);  
+
+        // Use stringstream to parse the full name into first and last names
+        stringstream nameStream(fullName);
+        if (!(getline(nameStream, firstName, ' ') && getline(nameStream, lastName))) {
+            cout << "Invalid input. Please enter both first and last names.\n";
+        }
+        else if (firstName.empty() || lastName.empty()) {
+            cout << "Invalid input. Both first and last names must be non-empty.\n";
+        }
+        else {
+          
+            firstName.erase(0, firstName.find_first_not_of(' '));
+            lastName.erase(0, lastName.find_first_not_of(' '));
+            break;  
         }
     }
 }
 
-// Get a valid integer input from the user
+
+string getValidDateInput() {
+    string date;
+    while (true) {
+        cout << "Enter booking date (yyyy-mm-dd): ";
+        cin >> date;
+        if (isValidDate(date)) {
+            return date;
+        }
+        else {
+            cout << "Invalid date format. Please enter the date as yyyy-mm-dd and make sure the date is valid.\n";
+        }
+    }
+}
+
+// Improved integer input validation
 int getValidIntegerInput(const string& prompt) {
     int value;
     while (true) {
         cout << prompt;
         if (cin >> value) {
-            return value;  // Return valid integer
+            return value;
         }
         else {
             cout << "Invalid input. Please enter a valid number.\n";
@@ -86,13 +85,13 @@ int getValidIntegerInput(const string& prompt) {
     }
 }
 
-// Get a valid double input from the user
+// Improved double input validation (ensuring baggage weight is positive)
 double getValidDoubleInput(const string& prompt) {
     double value;
     while (true) {
         cout << prompt;
         if (cin >> value && value >= 0) {
-            return value;  // Return valid positive number
+            return value;
         }
         else {
             cout << "Invalid input. Please enter a valid positive number.\n";
@@ -101,39 +100,51 @@ double getValidDoubleInput(const string& prompt) {
         }
     }
 }
+// Function to calculate the total fare based on flight and class
+double calculateFare(const Flight& flight, FareClass fareClass, const string& bookingTime,
+    double baggageWeight, double baggageFee) {
+    double totalFare = flight.baseFare;
 
-// Get a valid booking date input
-string getValidDateInput() {
-    string date;
-    while (true) {
-        cout << "Enter booking date (yyyy-mm-dd): ";
-        cin >> date;
-        if (date.size() == 10 && date[4] == '-' && date[7] == '-' && isdigit(date[0]) && isdigit(date[1]) && isdigit(date[2]) && isdigit(date[3])) {
-            return date;
-        }
-        else {
-            cout << "Invalid date format. Please enter the date as yyyy-mm-dd.\n";
-        }
+    switch (fareClass) {
+    case FareClass::Economy:
+        totalFare += flight.baseFare * 0.1; // Add 10% for Economy
+        break;
+    case FareClass::Business:
+        totalFare += flight.baseFare * 0.2; // Add 20% for Business
+        break;
+    case FareClass::FirstClass:
+        totalFare += flight.baseFare * 0.3; // Add 30% for First Class
+        break;
     }
+
+    totalFare += baggageFee; // Add baggage fee
+    return totalFare;
 }
-
-// Get the full name (first and last) and validate input
-void getValidUsername(string& firstName, string& lastName) {
-    while (true) {
-        cout << "Enter full name (First Last): ";
-        string fullName;
-        getline(cin, fullName);  
-
-        stringstream nameStream(fullName);  // Create a stringstream from the full name
-        getline(nameStream, firstName, ' ');  // Parse the first name
-        getline(nameStream, lastName);  // Parse the last name
-
-        // Check if both first and last names are valid
-        if (!firstName.empty() && !lastName.empty()) {
-            break;  
-        }
-        else {
-            cout << "Invalid input. Please enter both first and last names.\n";
-        }
+// Function to calculate additional baggage fees if weight exceeds the limit
+double calculateBaggageFee(double baggageWeight, double baggageLimit, double extraBaggageFeePerKg) {
+    if (baggageWeight > baggageLimit) {
+        return (baggageWeight - baggageLimit) * extraBaggageFeePerKg;
+    }
+    return 0.0;
+}
+// Add the current passenger booking to history
+void addBookingToHistory(shared_ptr<Passenger> flightHistory[], int& passengerCount, shared_ptr<Passenger> passenger) {
+    flightHistory[passengerCount] = passenger;
+    ++passengerCount;
+}
+// Display details of a passenger's booking
+void displayPassengerDetails(const shared_ptr<Passenger>& passenger, const Flight& selectedFlight) {
+    cout << "\nBooking Summary:\n";
+    cout << "Passenger: " << passenger->firstName << " " << passenger->lastName << "\n";
+    cout << "Flight Number: " << selectedFlight.flightNumber << "\n";
+    cout << "Total Fare: $" << fixed << setprecision(2) << passenger->totalFare << "\n";
+    cout << "Baggage Fee: $" << fixed << setprecision(2) << passenger->baggageFee << "\n";
+    cout << "Booking Time: " << passenger->bookingTime << "\n";
+}
+// Display all flight history for the user
+void displayFlightHistory(shared_ptr<Passenger> flightHistory[], int passengerCount) {
+    cout << "\nBooking History:\n";
+    for (int i = 0; i < passengerCount; ++i) {
+        displayPassengerDetails(flightHistory[i], { flightHistory[i]->flightNumber, "", "", 0, 0, {}, false });
     }
 }
