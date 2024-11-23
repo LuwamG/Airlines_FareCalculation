@@ -8,6 +8,7 @@ using namespace std;
 
 enum class FareClass { Economy, Business, FirstClass };
 
+// Structure to store flight details
 struct Flight {
     string flightNumber;
     string origin;
@@ -15,15 +16,16 @@ struct Flight {
     double baseFare;
     double distance;
     FareClass fareClass;
-    bool isPeakSeason;
+    bool isPeakSeason; // Indicates if it's peak season
 };
 
+// Structure to store passenger booking details
 struct Passenger {
     string name;
     string flightNumber;
     double fare;
     double baggageFee;
-    string bookingTime;
+    string bookingTime;  // Date of booking (yyyy-mm-dd format)
     FareClass fareClass;
     double baggageWeight;
 };
@@ -36,9 +38,7 @@ double calculateFare(const Flight& flight, FareClass fareClass, const string& bo
 void addBookingToHistory(vector<Passenger>& flightHistory, const Passenger& passenger);
 void displayPassengerDetails(const Passenger& passenger, const Flight& flight,
     double baggageWeight, double baggageFee);
-bool isValidDate(const string& date);
-
-int getValidIntegerInput(const string& prompt);
-double getValidDoubleInput(const string& prompt);
+void displayFlightHistory(const vector<Passenger>& flightHistory);
+bool isValidDate(const string& date);  // Function to validate booking date format (yyyy-mm-dd)
 
 #endif
