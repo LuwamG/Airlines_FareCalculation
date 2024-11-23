@@ -48,4 +48,7 @@ double getValidDoubleInput(const string& prompt);
 void getValidUsername(string* firstName, string* lastName);
 string getValidDateInput();
 
+// Function to calculate the baggage fee based on the weight
+double calculateBaggageFee(double baggageWeight, double baggageLimit, double extraBaggageFeePerKg);
+
 #endif

@@ -1,27 +1,23 @@
-#include <iostream>
-#include <vector>
-#include <string>
-#include <iomanip>
 #include "Airlines_FareCalculation.hpp"
+#include <iostream>
+#include <iomanip>
+#include <vector>
 
 using namespace std;
 
 int main() {
-    // Sample flights available
+    // Flight data (sample)
     vector<Flight> flights = {
-        {"AA101", "New York", "Los Angeles", 300.00, 2500, FareClass::Economy, false},
-        {"BA202", "London", "Paris", 150.00, 500, FareClass::Business, true},
-        {"CA303", "Tokyo", "Beijing", 200.00, 1000, FareClass::FirstClass, false}
+        {"FL001", "New York", "London", 500.00, 3000.0, FareClass::Economy, false},
+        {"FL002", "Chicago", "Paris", 600.00, 4500.0, FareClass::Business, true},
+        {"FL003", "Los Angeles", "Tokyo", 800.00, 6000.0, FareClass::FirstClass, false}
     };
 
-    short remainingSeats[] = { 50, 100, 150 };
-    short totalSeats[] = { 200, 200, 200 };
-
-    const double baggageFee = 50.0;
     const double extraBaggageFeePerKg = 10.0;
     const double baggageLimit = 20.0;
 
     vector<Passenger> flightHistory;
+
     char bookAnotherFlight = 'Y';
     char viewHistory = 'N';
 
@@ -45,9 +41,9 @@ int main() {
         string bookingTime = getValidDateInput();  // Get valid booking date
 
         Flight selectedFlight = flights[flightChoice - 1];
+        double baggageFee = calculateBaggageFee(baggageWeight, baggageLimit, extraBaggageFeePerKg);
         double totalFare = calculateFare(selectedFlight, fareClass, bookingTime, baggageFee,
-            remainingSeats[flightChoice - 1], totalSeats[flightChoice - 1], baggageWeight,
-            extraBaggageFeePerKg, baggageLimit);
+            100, 200, baggageWeight, extraBaggageFeePerKg, baggageLimit);
 
         // Create and store passenger booking
         Passenger passenger = { firstName, lastName, selectedFlight.flightNumber, totalFare, baggageFee, bookingTime, fareClass, baggageWeight };

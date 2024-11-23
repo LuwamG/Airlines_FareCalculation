@@ -7,6 +7,16 @@
 
 using namespace std;
 
+// Function to calculate baggage fee based on weight
+double calculateBaggageFee(double baggageWeight, double baggageLimit, double extraBaggageFeePerKg) {
+    if (baggageWeight > baggageLimit) {
+        // Calculate excess baggage fee
+        double excessWeight = baggageWeight - baggageLimit;
+        return excessWeight * extraBaggageFeePerKg;
+    }
+    return 0.0; // No baggage fee if within the limit
+}
+
 // Function to calculate the total fare based on different factors
 double calculateFare(const Flight& flight, FareClass fareClass, const string& bookingTime,
     double baggageFee, short remainingSeats, short totalSeats,
@@ -33,9 +43,8 @@ double calculateFare(const Flight& flight, FareClass fareClass, const string& bo
     }
 
     // Apply baggage surcharge for extra baggage
-    if (baggageWeight > baggageLimit) {
-        totalFare += (baggageWeight - baggageLimit) * extraBaggageFeePerKg;
-    }
+    double baggageExcessFee = calculateBaggageFee(baggageWeight, baggageLimit, extraBaggageFeePerKg);
+    totalFare += baggageExcessFee;
 
     // Demand-based pricing (higher fare when fewer seats are left)
     double demandFactor = 1 + ((double)(totalSeats - remainingSeats) / totalSeats);
