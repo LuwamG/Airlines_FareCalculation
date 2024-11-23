@@ -36,7 +36,9 @@ double calculateFare(const Flight& flight, FareClass fareClass, const string& bo
 void addBookingToHistory(vector<Passenger>& flightHistory, const Passenger& passenger);
 void displayPassengerDetails(const Passenger& passenger, const Flight& flight,
     double baggageWeight, double baggageFee);
-void displayFlightHistory(const vector<Passenger>& flightHistory);
-bool isValidDate(const string& date);  // Declare the isValidDate function
+bool isValidDate(const string& date);
+
+int getValidIntegerInput(const string& prompt);
+double getValidDoubleInput(const string& prompt);
 
 #endif
