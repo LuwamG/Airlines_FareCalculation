@@ -2,8 +2,8 @@
 #include <vector>
 #include <string>
 #include <iomanip>
-#include "Airlines_FareCalculation.hpp"
 #include <sstream>
+#include "Airlines_FareCalculation.hpp"
 
 using namespace std;
 
@@ -11,6 +11,7 @@ using namespace std;
 double calculateFare(const Flight& flight, FareClass fareClass, const string& bookingTime,
     double baggageFee, short remainingSeats, short totalSeats,
     double baggageWeight, double extraBaggageFeePerKg, double baggageLimit) {
+
     double totalFare = flight.baseFare;
 
     // Adjust fare for the class selected
@@ -24,6 +25,11 @@ double calculateFare(const Flight& flight, FareClass fareClass, const string& bo
     case FareClass::FirstClass:
         totalFare *= 2.0;  // First class is 2x base fare
         break;
+    }
+
+    // Apply peak season surcharge
+    if (flight.isPeakSeason) {
+        totalFare *= 1.2;  // Peak season increases fare by 20%
     }
 
     // Apply baggage surcharge for extra baggage
@@ -65,7 +71,7 @@ void addBookingToHistory(vector<Passenger>& flightHistory, const Passenger& pass
 void displayPassengerDetails(const Passenger& passenger, const Flight& selectedFlight,
     double baggageWeight, double baggageFee) {
     cout << "\nBooking Summary: \n";
-    cout << "Passenger: " << passenger.name << "\n";
+    cout << "Passenger: " << passenger.firstName << " " << passenger.lastName << "\n";
     cout << "Flight Number: " << selectedFlight.flightNumber << "\n";
     cout << "Fare Class: ";
     switch (passenger.fareClass) {
@@ -86,7 +92,8 @@ void displayFlightHistory(const vector<Passenger>& flightHistory) {
     else {
         cout << "\nBooking History:\n";
         for (const auto& passenger : flightHistory) {
-            cout << "Passenger: " << passenger.name << ", Flight: " << passenger.flightNumber
+            cout << "Passenger: " << passenger.firstName << " " << passenger.lastName
+                << ", Flight: " << passenger.flightNumber
                 << ", Fare: $" << fixed << setprecision(2) << passenger.fare
                 << ", Booking Time: " << passenger.bookingTime << endl;
         }
@@ -99,6 +106,10 @@ int getValidIntegerInput(const string& prompt) {
     while (true) {
         cout << prompt;
         if (cin >> value) {
+            if (value < 1) {
+                cout << "Input must be a positive integer.\n";
+                continue;
+            }
             return value;
         }
         else {
@@ -121,6 +132,37 @@ double getValidDoubleInput(const string& prompt) {
             cout << "Invalid input. Please enter a valid positive number.\n";
             cin.clear();  // Clear error flag
             cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Ignore invalid input
+        }
+    }
+}
+
+// Function to get a valid username input
+void getValidUsername(string* firstName, string* lastName) {
+    while (true) {
+        cout << "Enter your First Name and Last Name (separated by a space): ";
+        cin >> *firstName >> *lastName;
+
+        // Ensure both first and last name are entered.
+        if (!firstName->empty() && !lastName->empty()) {
+            break;
+        }
+        else {
+            cout << "Both first name and last name are required. Please try again.\n";
+        }
+    }
+}
+
+// Function to get a valid date input (yyyy-mm-dd)
+string getValidDateInput() {
+    string date;
+    while (true) {
+        cout << "Enter booking date (yyyy-mm-dd): ";
+        getline(cin, date);
+        if (isValidDate(date)) {
+            return date;
+        }
+        else {
+            cout << "Invalid date format. Please use the format yyyy-mm-dd.\n";
         }
     }
 }
