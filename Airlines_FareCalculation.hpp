@@ -7,7 +7,8 @@
 using namespace std;
 
 enum class FareClass { Economy, Business, FirstClass };
-//struct Flight for flight details
+
+// Flight details struct
 struct Flight {
     string flightNumber;
     string origin;
@@ -17,9 +18,11 @@ struct Flight {
     FareClass fareClass;
     bool isPeakSeason;
 };
-//struct Passenger for passenger details
+
+// Passenger details struct
 struct Passenger {
-    string name;
+    string firstName;
+    string lastName;
     string flightNumber;
     double fare;
     double baggageFee;
@@ -39,8 +42,10 @@ void displayPassengerDetails(const Passenger& passenger, const Flight& flight,
 void displayFlightHistory(const vector<Passenger>& flightHistory);
 bool isValidDate(const string& date);
 
-// Declare the functions for input validation
+// Functions for input validation and username handling
 int getValidIntegerInput(const string& prompt);
 double getValidDoubleInput(const string& prompt);
+void getValidUsername(string* firstName, string* lastName);
+string getValidDateInput();
 
-#endif 
+#endif
