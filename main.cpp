@@ -1,11 +1,11 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "Airlines_FareCalculation.hpp"  // Include the header for function declarations
+#include "Airlines_FareCalculation.hpp"  
 
 using namespace std;
 
-// Function to ensure the input is a valid integer.
+// Function to ensure the input is a valid integer
 int getValidIntegerInput(const string& prompt) {
     int value;
     while (true) {
@@ -15,13 +15,13 @@ int getValidIntegerInput(const string& prompt) {
         }
         else {
             cout << "Invalid input. Please enter a valid number.\n";
-            cin.clear();  // Clear error flag
+            cin.clear(); 
             cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Ignore invalid input
         }
     }
 }
 
-// Function to ensure the input is a valid double.
+// Function to ensure the input is a valid double
 double getValidDoubleInput(const string& prompt) {
     double value;
     while (true) {
@@ -38,25 +38,25 @@ double getValidDoubleInput(const string& prompt) {
 }
 
 int main() {
-    // Sample flights available
+    // Sample flights available for selection
     vector<Flight> flights = {
         {"AA101", "New York", "Los Angeles", 300.00, 2500, FareClass::Economy, false},
         {"BA202", "London", "Paris", 150.00, 500, FareClass::Business, true},
         {"CA303", "Tokyo", "Beijing", 200.00, 1000, FareClass::FirstClass, false}
     };
 
-    short remainingSeats[] = { 50, 100, 150 };
-    short totalSeats[] = { 200, 200, 200 };
+    short remainingSeats[] = { 50, 100, 150 };  // Remaining seats for each flight
+    short totalSeats[] = { 200, 200, 200 };  // Total seats for each flight
 
     const double baggageFee = 50.0;
     const double extraBaggageFeePerKg = 25.0;
     const double baggageLimit = 20.0;
 
-    vector<Passenger> flightHistory;
+    vector<Passenger> flightHistory;  // Store the flight history
     char viewHistory;
 
     do {
-        // Show available flights
+        // Show available flights to the user
         cout << "Available Flights: \n";
         for (size_t i = 0; i < flights.size(); ++i) {
             cout << i + 1 << ". Flight Number: " << flights[i].flightNumber
@@ -79,20 +79,21 @@ int main() {
         cin.ignore();
         getline(cin, passengerName);
 
+        // Get the selected fare class from the user
         FareClass selectedFareClass = (FareClass)getValidIntegerInput("Select Fare Class (1: Economy, 2: Business, 3: First Class): ");
         double baggageWeight = getValidDoubleInput("Enter baggage weight in kg: ");
 
-        // Calculate the fare
+        // Calculate the total fare for the selected flight
         Flight selectedFlight = flights[flightChoice - 1];
         double totalFare = calculateFare(selectedFlight, selectedFareClass, "2024-11-16", baggageFee,
             remainingSeats[flightChoice - 1], totalSeats[flightChoice - 1],
             baggageWeight, extraBaggageFeePerKg, baggageLimit);
 
-        // Store passenger info
+        // Store the passenger info in the flight history
         Passenger newPassenger = { passengerName, selectedFlight.flightNumber, totalFare, baggageFee, "2024-11-16", selectedFareClass, baggageWeight };
         addBookingToHistory(flightHistory, newPassenger);
 
-        // Display passenger details
+        // Display the booking summary for the user
         displayPassengerDetails(newPassenger, selectedFlight, baggageWeight, baggageFee);
 
         // Option to view booking history
