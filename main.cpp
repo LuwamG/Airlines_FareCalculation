@@ -1,7 +1,8 @@
 #include <iostream>
 #include <vector>
 #include <string>
-#include "Airlines_FareCalculation.hpp"  
+#include <iomanip>
+#include "Airlines_FareCalculation.hpp"
 
 using namespace std;
 
@@ -17,66 +18,53 @@ int main() {
     short totalSeats[] = { 200, 200, 200 };
 
     const double baggageFee = 50.0;
-    const double extraBaggageFeePerKg = 25.0;
+    const double extraBaggageFeePerKg = 10.0;
     const double baggageLimit = 20.0;
 
-    vector<Passenger> flightHistory;  // To store the passenger booking history
-    char bookAnotherFlight = 'N';  // Variable to control if the user wants to book another flight
-    char viewHistory = 'N';  // Variable to control if the user wants to view history
+    vector<Passenger> flightHistory;
+    char bookAnotherFlight = 'Y';
+    char viewHistory = 'N';
 
-    // Main loop to handle flight booking
     do {
         // Show available flights
-        cout << "Available Flights: \n";
-        for (size_t i = 0; i < flights.size(); ++i) {
+        cout << "Available Flights:\n";
+        for (size_t i = 0; i < flights.size(); i++) {
             cout << i + 1 << ". Flight Number: " << flights[i].flightNumber
-                << ", From: " << flights[i].origin
-                << " to " << flights[i].destination
-                << ", Base Fare: $" << flights[i].baseFare << endl;
+                << ", From: " << flights[i].origin << " to " << flights[i].destination
+                << ", Base Fare: $" << fixed << setprecision(2) << flights[i].baseFare << "\n";
         }
 
-        // Get user choice for flight
         int flightChoice = getValidIntegerInput("Select a flight by entering the number (1-3): ");
+        cin.ignore();  // Clear the buffer before taking the passenger name input
 
-        if (flightChoice < 1 || flightChoice > 3) {
-            cout << "Invalid flight selection. Please try again.\n";
-            continue;
-        }
+        string firstName, lastName;
+        getValidUsername(&firstName, &lastName); // Get full name using pointer
 
-        // Get passenger details
-        string passengerName;
-        cout << "Enter passenger name: ";
-        cin.ignore();  // Clear any leftover newline
-        getline(cin, passengerName);
+        FareClass fareClass = static_cast<FareClass>(getValidIntegerInput("Enter Fare Class (1: Economy, 2: Business, 3: First Class): ") - 1);
+        double baggageWeight = getValidDoubleInput("Enter baggage weight (in kg): ");
+        string bookingTime = getValidDateInput();  // Get valid booking date
 
-        FareClass selectedFareClass = (FareClass)getValidIntegerInput("Select Fare Class (1: Economy, 2: Business, 3: First Class): ");
-        double baggageWeight = getValidDoubleInput("Enter baggage weight in kg: ");
-
-        // Calculate the fare
         Flight selectedFlight = flights[flightChoice - 1];
-        double totalFare = calculateFare(selectedFlight, selectedFareClass, "2024-11-16", baggageFee,
-            remainingSeats[flightChoice - 1], totalSeats[flightChoice - 1],
-            baggageWeight, extraBaggageFeePerKg, baggageLimit);
+        double totalFare = calculateFare(selectedFlight, fareClass, bookingTime, baggageFee,
+            remainingSeats[flightChoice - 1], totalSeats[flightChoice - 1], baggageWeight,
+            extraBaggageFeePerKg, baggageLimit);
 
-        // Store passenger info
-        Passenger newPassenger = { passengerName, selectedFlight.flightNumber, totalFare, baggageFee, "2024-11-16", selectedFareClass, baggageWeight };
-        addBookingToHistory(flightHistory, newPassenger);
+        // Create and store passenger booking
+        Passenger passenger = { firstName, lastName, selectedFlight.flightNumber, totalFare, baggageFee, bookingTime, fareClass, baggageWeight };
+        addBookingToHistory(flightHistory, passenger);
 
-        // Display passenger details
-        displayPassengerDetails(newPassenger, selectedFlight, baggageWeight, baggageFee);
+        // Show the booking summary
+        displayPassengerDetails(passenger, selectedFlight, baggageWeight, baggageFee);
 
-        // Ask user if they want to book another flight
-        cout << "Would you like to book another flight? (Y/N): ";
+        cout << "\nDo you want to book another flight? (Y/N): ";
         cin >> bookAnotherFlight;
+    } while (bookAnotherFlight == 'Y' || bookAnotherFlight == 'y');
 
-    } while (bookAnotherFlight == 'Y' || bookAnotherFlight == 'y');  // Repeat if user wants to book another flight
-
-    // After the booking process, ask if they want to view booking history
-    cout << "Would you like to view your booking history? (Y/N): ";
+    // Ask if the user wants to view booking history
+    cout << "\nDo you want to view your booking history? (Y/N): ";
     cin >> viewHistory;
-
     if (viewHistory == 'Y' || viewHistory == 'y') {
-        displayFlightHistory(flightHistory);  // Show booking history
+        displayFlightHistory(flightHistory);
     }
 
     return 0;
