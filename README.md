@@ -29,4 +29,8 @@ Enter Date: Input the booking date in yyyy-mm-dd format.
 View Booking Summary: The system will calculate the fare and display a summary.
 View History: You can choose to view your booking history.
 Repeat: You can make another booking or exit.
+
+License
 This project is open-source and free to use and modify.
+
+Video link: https://drive.google.com/file/d/1X3aOZ24fx3eLjafs96RVg_7ftR4RAVNS/view?usp=drive_link
