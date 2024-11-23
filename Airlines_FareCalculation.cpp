@@ -1,40 +1,73 @@
-#include "Airlines_FareCalculation.hpp" 
 #include <iostream>
+#include <vector>
+#include <string>
+#include <iomanip>
 #include <sstream>
-#include <iomanip> 
+#include "Airlines_FareCalculation.hpp"  
 
 using namespace std;
 
-// Function to calculate the total fare based on multiple factors (fare class, baggage, demand, etc.)
+// Function to ensure the input is a valid integer.
+int getValidIntegerInput(const string& prompt) {
+    int value;
+    while (true) {
+        cout << prompt;
+        if (cin >> value) {
+            return value;
+        }
+        else {
+            cout << "Invalid input. Please enter a valid number.\n";
+            cin.clear();  
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Ignore invalid input
+        }
+    }
+}
+
+// Function to ensure the input is a valid double.
+double getValidDoubleInput(const string& prompt) {
+    double value;
+    while (true) {
+        cout << prompt;
+        if (cin >> value && value >= 0) {
+            return value;
+        }
+        else {
+            cout << "Invalid input. Please enter a valid positive number.\n";
+            cin.clear();  // Clear error flag
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');  // Ignore invalid input
+        }
+    }
+}
+
+// Function to calculate the total fare based on different factors
 double calculateFare(const Flight& flight, FareClass fareClass, const string& bookingTime,
     double baggageFee, short remainingSeats, short totalSeats,
     double baggageWeight, double extraBaggageFeePerKg, double baggageLimit) {
+    double totalFare = flight.baseFare;
 
-    double totalFare = flight.baseFare; // the base fare
-
-    // Adjust fare based on the selected fare class
+    // Adjust fare for the class selected
     switch (fareClass) {
     case FareClass::Economy:
-        totalFare *= 1.0;  // No surcharge for Economy class
+        totalFare *= 1.0;  // No surcharge for Economy
         break;
     case FareClass::Business:
-        totalFare *= 1.5;  // Business class is 1.5x the base fare
+        totalFare *= 1.5;  // Business class is 1.5x base fare
         break;
     case FareClass::FirstClass:
-        totalFare *= 2.0;  // First class is 2x the base fare
+        totalFare *= 2.0;  // First class is 2x base fare
         break;
     }
 
-    // Apply surcharge for extra baggage if it exceeds the limit
+    // Apply baggage surcharge for extra baggage
     if (baggageWeight > baggageLimit) {
         totalFare += (baggageWeight - baggageLimit) * extraBaggageFeePerKg;
     }
 
-    // Demand-based pricing (higher fare when fewer seats are available)
+    // Demand-based pricing (higher fare when fewer seats are left)
     double demandFactor = 1 + ((double)(totalSeats - remainingSeats) / totalSeats);
     totalFare *= demandFactor;
 
-    return totalFare + baggageFee;  // Include any baggage fee in the total fare
+    return totalFare + baggageFee;
 }
 
 // Function to validate the booking date format (yyyy-mm-dd)
@@ -42,7 +75,7 @@ bool isValidDate(const string& date) {
     // Ensure the string has the correct length and format (yyyy-mm-dd)
     if (date.size() != 10 || date[4] != '-' || date[7] != '-') return false;
 
-    // Use stringstream to extract year, month, and day
+    // Use a stringstream to extract year, month, and day
     stringstream stream(date);
     int year, month, day;
     char dash1, dash2;
@@ -51,44 +84,41 @@ bool isValidDate(const string& date) {
     // Validate the year, month, and day ranges
     if (year <= 0 || month < 1 || month > 12 || day < 1 || day > 31) return false;
 
-    // Check for February (leap year handling)
+    // February check (leap year)
     if (month == 2 && (day > 29 || (day == 29 && !(year % 4 == 0 && (year % 100 != 0 || year % 400 == 0))))) return false;
 
-    // Check for months with 30 days
+    // 30-day months check
     if ((month == 4 || month == 6 || month == 9 || month == 11) && day > 30) return false;
 
     return true;
 }
 
-// Function to add a booking to the flight history
+// Function to add booking to the flight history
 void addBookingToHistory(vector<Passenger>& flightHistory, const Passenger& passenger) {
-    flightHistory.push_back(passenger); // Add passenger to history
+    flightHistory.push_back(passenger);
 }
 
-// Function to display passenger booking details
+// Function to display passenger details
 void displayPassengerDetails(const Passenger& passenger, const Flight& selectedFlight,
     double baggageWeight, double baggageFee) {
     cout << "\nBooking Summary: \n";
     cout << "Passenger: " << passenger.name << "\n";
     cout << "Flight Number: " << selectedFlight.flightNumber << "\n";
     cout << "Fare Class: ";
-
-    // Display fare class as string
     switch (passenger.fareClass) {
     case FareClass::Economy: cout << "Economy"; break;
     case FareClass::Business: cout << "Business"; break;
     case FareClass::FirstClass: cout << "First Class"; break;
     }
-
     cout << "\nTotal Fare: $" << fixed << setprecision(2) << passenger.fare << "\n";
     cout << "Baggage Weight: " << baggageWeight << " kg\n";
     cout << "Baggage Fee: $" << baggageFee << "\n";
 }
 
-// Function to display the flight booking history for the user
+// Function to display flight history for the user
 void displayFlightHistory(const vector<Passenger>& flightHistory) {
     if (flightHistory.empty()) {
-        cout << "No previous bookings found.\n";  // No booking history
+        cout << "No previous bookings found.\n";
     }
     else {
         cout << "\nBooking History:\n";
