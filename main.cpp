@@ -53,7 +53,7 @@ int main() {
         // Show the booking summary
         displayPassengerDetails(passenger, selectedFlight);
 
-        cout << "\nDo you want to book another flight? (Y/N): ";
+        cout << "Do you want to book another flight? (Y/N): ";
         cin >> bookAnotherFlight;
     } while (bookAnotherFlight == 'Y' || bookAnotherFlight == 'y');
 
